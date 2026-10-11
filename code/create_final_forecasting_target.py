@@ -1,55 +1,77 @@
 import pandas as pd
 
-input_file = "data/processed/katraj_airpulse_episodes_final.csv"
-output_file = "data/processed/katraj_airpulse_ml_final.csv"
+print("=" * 60)
+print("AIRPULSE - 24-HOUR FORECASTING TARGET")
+print("=" * 60)
 
-df = pd.read_csv(input_file)
+# --------------------------------------------------
+# LOAD FINAL EPISODE-LABELLED DATASET
+# --------------------------------------------------
 
-df["timestamp"] = pd.to_datetime(df["timestamp"])
+df = pd.read_csv(
+    "data/processed/katraj_airpulse_features.csv",
+    parse_dates=["timestamp"]
+)
 
 df = df.sort_values("timestamp").reset_index(drop=True)
 
-# Create timestamp -> episode label lookup
-label_lookup = df[["timestamp", "episode_label"]].copy()
+# --------------------------------------------------
+# CREATE 24-HOUR FUTURE TARGET
+# --------------------------------------------------
 
-label_lookup["target_timestamp"] = (
-    label_lookup["timestamp"] + pd.Timedelta(hours=24)
-)
+# Create a lookup:
+# timestamp -> episode status at that timestamp
+episode_lookup = df.set_index("timestamp")["episode_label"]
 
-label_lookup = label_lookup[
-    ["target_timestamp", "episode_label"]
-].rename(
-    columns={"episode_label": "target_24h"}
-)
+# Find the exact timestamp 24 hours in the future
+future_timestamp = df["timestamp"] + pd.Timedelta(hours=24)
 
-# Match actual observation exactly 24 hours later
-df = df.merge(
-    label_lookup,
-    left_on="timestamp",
-    right_on="target_timestamp",
-    how="left"
-)
+# Get the episode status exactly 24 hours later
+df["target_24h"] = future_timestamp.map(episode_lookup)
 
-df.drop(columns=["target_timestamp"], inplace=True)
+# --------------------------------------------------
+# UNKNOWN TARGETS
+# --------------------------------------------------
 
-# No observation exactly 24 hours later
+# If there is no observation exactly 24 hours later,
+# the target is unknown.
 df["target_24h"] = df["target_24h"].fillna(-1)
 
-print("=" * 60)
-print("24-HOUR FORECASTING TARGET")
-print("=" * 60)
+# If the future episode status itself is unknown,
+# keep it as unknown.
+df.loc[df["target_24h"] == -1, "target_24h"] = -1
 
-print("\nTarget distribution:")
+# Convert target to integer
+df["target_24h"] = df["target_24h"].astype(int)
+
+# --------------------------------------------------
+# SUMMARY
+# --------------------------------------------------
+
+print("\nFORECASTING TARGET SUMMARY")
+print("-" * 60)
+
+print("Total rows:", len(df))
+
+print("\nTarget counts:")
 print(df["target_24h"].value_counts().sort_index())
 
-print("\nTotal rows:", len(df))
-
 print("\nTarget meaning:")
-print("1  = episode occurs exactly 24 hours later")
-print("0  = no episode exactly 24 hours later")
-print("-1 = unknown / insufficient future data")
+print("1  = Episode occurs exactly 24 hours later")
+print("0  = No episode exactly 24 hours later")
+print("-1 = Unknown / insufficient future data")
 
-df.to_csv(output_file, index=False)
+# --------------------------------------------------
+# SAVE
+# --------------------------------------------------
+
+output_path = "data/processed/katraj_airpulse_ml_final.csv"
+
+df.to_csv(output_path, index=False)
 
 print("\nSaved to:")
-print(output_file)
+print(output_path)
+
+print("=" * 60)
+print("24-HOUR FORECASTING TARGET COMPLETE")
+print("=" * 60)

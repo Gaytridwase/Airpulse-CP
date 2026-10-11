@@ -1,0 +1,193 @@
+/* ==========================================================
+   AIRPULSE — ADVANCED THEME
+   Dark "instrument panel" styling for the Streamlit app
+   ========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root{
+  --bg:#0E1319; --panel:#151C23; --panel2:#1B242C; --panel3:#212C35; --line:#28333C;
+  --text:#E7ECEF; --muted:#8694A3; --faint:#55636F;
+  --good:#4ADE80; --mod:#F5C64B; --poor:#F0924A; --severe:#EF6A6A; --haz:#B978E8;
+  --accent:#3FD6C6; --accent2:#5B8CFF;
+}
+
+/* ---------- base ---------- */
+html, body, [class*="css"]{
+  font-family:'IBM Plex Sans', system-ui, sans-serif !important;
+}
+.stApp{
+  background:
+    radial-gradient(900px 500px at 88% -8%, rgba(63,214,198,.07), transparent 60%),
+    radial-gradient(700px 400px at -8% 108%, rgba(91,140,255,.06), transparent 60%),
+    var(--bg) !important;
+  color: var(--text);
+}
+.block-container{
+  padding-top:2.2rem; padding-bottom:3rem; max-width:1400px;
+  animation: airpulse-fade .4s ease;
+}
+@keyframes airpulse-fade{ from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none} }
+::selection{ background:rgba(63,214,198,.3); }
+
+::-webkit-scrollbar{ width:10px; height:10px; }
+::-webkit-scrollbar-track{ background:var(--bg); }
+::-webkit-scrollbar-thumb{ background:var(--panel3); border-radius:6px; border:2px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover{ background:var(--accent); }
+
+/* ---------- sidebar ---------- */
+section[data-testid="stSidebar"]{
+  background:var(--panel) !important;
+  border-right:1px solid var(--line);
+}
+section[data-testid="stSidebar"] *{ color:var(--text) !important; }
+section[data-testid="stSidebar"] h1{
+  font-family:'Space Grotesk', sans-serif !important; font-weight:700 !important;
+  font-size:1.5rem !important; letter-spacing:.2px;
+}
+section[data-testid="stSidebar"] h3{
+  color:var(--muted) !important; font-size:.75rem !important; text-transform:uppercase;
+  letter-spacing:.08em; font-weight:600 !important; margin-top:.5rem;
+}
+section[data-testid="stSidebar"] hr{ border-top:1px solid var(--line) !important; }
+section[data-testid="stSidebar"] [data-testid="stCaptionContainer"]{
+  color:var(--faint) !important; font-size:.78rem; line-height:1.6;
+}
+
+section[data-testid="stSidebar"] div[role="radiogroup"]{ gap:2px; display:flex; flex-direction:column; }
+section[data-testid="stSidebar"] div[role="radiogroup"] label{
+  background:transparent; border-radius:8px; padding:9px 10px !important;
+  transition:background .18s, transform .18s, box-shadow .18s; cursor:pointer;
+}
+section[data-testid="stSidebar"] div[role="radiogroup"] label:hover{
+  background:var(--panel2) !important; transform:translateX(2px);
+}
+section[data-testid="stSidebar"] div[role="radiogroup"] label[data-checked="true"],
+section[data-testid="stSidebar"] div[role="radiogroup"] label:has(input:checked){
+  background:var(--panel2) !important; box-shadow:inset 2px 0 0 var(--accent);
+}
+section[data-testid="stSidebar"] div[role="radiogroup"] label[data-checked="true"] p,
+section[data-testid="stSidebar"] div[role="radiogroup"] label:has(input:checked) p{
+  color:var(--accent) !important; font-weight:600 !important;
+}
+section[data-testid="stSidebar"] div[role="radiogroup"] label > div:first-child{
+  border-color:var(--faint) !important;
+}
+section[data-testid="stSidebar"] div[role="radiogroup"] label input:checked + div{
+  border-color:var(--accent) !important; background:var(--accent) !important;
+}
+
+/* ---------- live status badge (sidebar) ---------- */
+.airpulse-live{
+  display:flex; align-items:center; gap:7px; font-size:.78rem; color:var(--muted) !important;
+  margin:2px 0 10px 2px;
+}
+.airpulse-live .dot{
+  width:7px; height:7px; border-radius:50%; background:var(--good); display:inline-block;
+  box-shadow:0 0 0 0 rgba(74,222,128,.6); animation:airpulse-pulse 2s infinite;
+}
+@keyframes airpulse-pulse{
+  0%{ box-shadow:0 0 0 0 rgba(74,222,128,.55); }
+  70%{ box-shadow:0 0 0 7px rgba(74,222,128,0); }
+  100%{ box-shadow:0 0 0 0 rgba(74,222,128,0); }
+}
+
+/* ---------- headings ---------- */
+h1, h2, h3, .disp{ font-family:'Space Grotesk', sans-serif !important; letter-spacing:.1px; }
+h1{ color:var(--text) !important; font-weight:700 !important; }
+h2{ color:var(--text) !important; font-weight:600 !important; }
+h3{ color:var(--text) !important; font-weight:600 !important; font-size:1.08rem !important;
+    border-left:3px solid var(--accent); padding-left:10px; margin-top:1.6rem !important; }
+p, li, span, label, .stMarkdown{ color:var(--text); }
+[data-testid="stCaptionContainer"]{ color:var(--muted) !important; }
+
+/* ---------- metric cards ---------- */
+div[data-testid="stMetric"]{
+  background:var(--panel); border:1px solid var(--line); border-radius:12px;
+  padding:16px 18px; transition:transform .2s, box-shadow .2s, border-color .2s;
+}
+div[data-testid="stMetric"]:hover{
+  transform:translateY(-3px); border-color:#34424d;
+  box-shadow:0 14px 30px -16px rgba(0,0,0,.65);
+}
+div[data-testid="stMetricLabel"]{
+  color:var(--muted) !important; font-size:.72rem !important; text-transform:uppercase;
+  letter-spacing:.06em; font-weight:500 !important;
+}
+div[data-testid="stMetricValue"]{
+  color:var(--text) !important; font-weight:700 !important;
+  font-family:'Space Grotesk', sans-serif !important;
+}
+div[data-testid="stMetricDelta"] svg{ transform:scale(.9); }
+
+/* ---------- buttons ---------- */
+.stButton > button, .stDownloadButton > button{
+  border-radius:8px !important; border:1px solid var(--line) !important;
+  background:var(--panel2) !important; color:var(--text) !important;
+  font-weight:600 !important; transition:all .18s;
+}
+.stButton > button:hover, .stDownloadButton > button:hover{
+  border-color:var(--accent) !important; color:var(--accent) !important;
+  box-shadow:0 0 0 1px var(--accent) inset; transform:translateY(-1px);
+}
+.stButton > button[kind="primary"]{
+  background:linear-gradient(135deg, var(--accent), var(--accent2)) !important;
+  color:#06231f !important; border:none !important;
+}
+
+/* ---------- file uploader ---------- */
+section[data-testid="stFileUploaderDropzone"]{
+  border-radius:12px !important; border:1.5px dashed var(--line) !important;
+  background:var(--panel) !important; transition:all .2s;
+}
+section[data-testid="stFileUploaderDropzone"]:hover{
+  border-color:var(--accent) !important; background:rgba(63,214,198,.05) !important;
+}
+section[data-testid="stFileUploaderDropzone"] *{ color:var(--text) !important; }
+section[data-testid="stFileUploaderDropzone"] button{
+  background:var(--accent) !important; color:#06231f !important; border:none !important;
+  font-weight:600 !important; border-radius:7px !important;
+}
+
+/* ---------- alerts ---------- */
+div[data-testid="stAlert"]{ border-radius:10px !important; border:1px solid var(--line) !important; }
+div[data-testid="stAlert"] p{ color:var(--text) !important; }
+div[data-testid="stNotificationContentSuccess"]{ background:rgba(74,222,128,.08) !important; border-left:3px solid var(--good) !important; }
+div[data-testid="stNotificationContentWarning"]{ background:rgba(245,198,75,.08) !important; border-left:3px solid var(--mod) !important; }
+div[data-testid="stNotificationContentInfo"]{ background:rgba(91,140,255,.08) !important; border-left:3px solid var(--accent2) !important; }
+div[data-testid="stNotificationContentError"]{ background:rgba(239,106,106,.08) !important; border-left:3px solid var(--severe) !important; }
+
+/* ---------- dataframes & tables ---------- */
+div[data-testid="stDataFrame"], div[data-testid="stTable"]{
+  border-radius:10px !important; overflow:hidden; border:1px solid var(--line);
+}
+
+/* ---------- plotly charts ---------- */
+div[data-testid="stPlotlyChart"]{
+  background:var(--panel); border:1px solid var(--line); border-radius:12px;
+  padding:10px 6px 2px; transition:border-color .2s;
+}
+div[data-testid="stPlotlyChart"]:hover{ border-color:#34424d; }
+
+/* ---------- images (SHAP plots, dark-themed at generation time) ---------- */
+div[data-testid="stImage"]{
+  background:var(--panel); border-radius:10px; padding:10px; border:1px solid var(--line);
+}
+
+/* ---------- selectbox / slider ---------- */
+div[data-baseweb="select"] > div{
+  background:var(--panel2) !important; border-color:var(--line) !important; color:var(--text) !important;
+}
+.stSlider [data-baseweb="slider"] div[role="slider"]{ background:var(--accent) !important; }
+.stSlider [data-baseweb="slider"] > div > div{ background:var(--accent) !important; }
+
+/* ---------- tabs ---------- */
+button[data-baseweb="tab"]{ color:var(--muted) !important; }
+button[data-baseweb="tab"][aria-selected="true"]{ color:var(--accent) !important; }
+div[data-baseweb="tab-highlight"]{ background:var(--accent) !important; }
+div[data-baseweb="tab-border"]{ background:var(--line) !important; }
+
+/* ---------- misc ---------- */
+hr{ border:none !important; border-top:1px solid var(--line) !important; margin:1.5rem 0 !important; }
+code{ background:var(--panel2) !important; color:var(--accent) !important; }
+a{ color:var(--accent2) !important; }

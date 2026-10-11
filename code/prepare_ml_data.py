@@ -67,6 +67,12 @@ X_test_numeric = numeric_imputer.transform(
 # --------------------------------------------------
 
 encoder = OneHotEncoder(
+    categories=[[
+        "Winter",
+        "Summer",
+        "Monsoon",
+        "Post-Monsoon"
+    ]],
     handle_unknown="ignore",
     sparse_output=False
 )
